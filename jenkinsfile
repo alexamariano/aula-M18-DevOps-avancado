@@ -6,31 +6,31 @@ pipeline {
 
         stage("Clonar o hub de leitura integrado") {
             steps {
-                sh 'rm -rf hub-de-leitura-integrado2 || true'
-                sh 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-integrado2.git'
+                bat 'rm -rf hub-de-leitura-integrado2 || true'
+                bat 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-integrado2.git'
             }
         }
 
         stage("Instalar dependencias do projeto") {
             steps {
                 dir('hub-de-leitura-integrado2') {
-                    sh 'npm install'
-                    sh 'nohup npm start &'
+                    bat 'npm install'
+                    bat 'nohup npm start &'
                 }
             }
         }
 
         stage("Clonar o projeto de teste") {
             steps {
-                sh 'rm -rf hub-de-leitura-teste-ui2 || true'
-                sh 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-teste-ui2.git'
+                bat 'rm -rf hub-de-leitura-teste-ui2 || true'
+                bat 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-teste-ui2.git'
             }
         }
 
         stage("Instalar dependencias do projeto de teste") {
             steps {
                 dir('hub-de-leitura-teste-ui2') {
-                    sh 'npm install'
+                    bat 'npm install'
                 }
             }
         }
@@ -38,7 +38,7 @@ pipeline {
         stage('Executar os testes automatizados') {
             steps {
                 dir('hub-de-leitura-teste-ui2') {
-                    sh 'npm test'
+                    bat 'npm test'
                 }
 
             }
@@ -52,7 +52,7 @@ pipeline {
                 allure includeProperties: false, jdk: '', results: [[ path: 'allure-report']]
             }
           
-            sh 'pkill -f "node" || true' 
+            bat 'pkill -f "node" || true' 
         }
     }
 

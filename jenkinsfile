@@ -6,7 +6,7 @@ pipeline {
 
         stage("Clonar o hub de leitura integrado") {
             steps {
-                bat 'rm -rf hub-de-leitura-integrado2 || true'
+                bat 'if exist hub-de-leitura-integrado2 rmdir /s /q hub-de-leitura-integrado2'
                 bat 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-integrado2.git'
             }
         }
@@ -20,16 +20,21 @@ pipeline {
             }
         }
 
+        // ... (os dois primeiros stages do hub-de-leitura-integrado continuam iguais) ...
+
         stage("Clonar o projeto de teste") {
             steps {
-                bat 'rm -rf hub-de-leitura-teste-ui2 || true'
-                bat 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-teste-ui2.git'
+                // 1. Altera o nome da pasta para o nome do seu novo repositório
+                bat 'rm -rf aula-M18-DevOps-avancado || true'
+                // 2. Altera a URL para o seu GitHub
+                bat 'git clone --depth 1 https://github.com/alexamariano/aula-M18-DevOps-avancado.git'
             }
         }
 
         stage("Instalar dependencias do projeto de teste") {
             steps {
-                dir('hub-de-leitura-teste-ui2') {
+                // 3. Atualiza o diretório
+                dir('aula-M18-DevOps-avancado') {
                     bat 'npm install'
                 }
             }
@@ -37,23 +42,23 @@ pipeline {
 
         stage('Executar os testes automatizados') {
             steps {
-                dir('hub-de-leitura-teste-ui2') {
+                // 4. Atualiza o diretório
+                dir('aula-M18-DevOps-avancado') {
                     bat 'npm test'
                 }
-
             }
         }
     }
 
     post {
         always {
-            dir('hub-de-leitura-teste-ui2') {
+            // 5. Atualiza o diretório no post-build
+            dir('aula-M18-DevOps-avancado') {
                 archiveArtifacts artifacts: 'cypress/screenshots/**/*.*,cypress/videos/**/*.*', allowEmptyArchive: true
-                allure includeProperties: false, jdk: '', results: [[ path: 'allure-report']]
+                //allure includeProperties: false, jdk: '', results: [[ path: 'allure-report']]
             }
           
             bat 'pkill -f "node" || true' 
         }
     }
-
 }

@@ -6,16 +6,20 @@ pipeline {
 
         stage("Clonar o hub de leitura integrado") {
             steps {
-                bat 'if exist hub-de-leitura-integrado2 rmdir /s /q hub-de-leitura-integrado2'
-                bat 'git clone --depth 1 https://github.com/EBAC-QE/hub-de-leitura-integrado2.git'
+                bat '''
+                if exist hub-de-leitura-integrado2 rmdir /s /q hub-de-leitura-integrado2
+                git clone https://github.com/EBAC-QE/hub-de-leitura-integrado2.git
+                '''
             }
         }
 
         stage("Instalar dependencias do projeto") {
             steps {
                 dir('hub-de-leitura-integrado2') {
-                    bat 'npm install'
-                    bat 'nohup npm start &'
+                    bat '''
+                        call npm install
+                        start /B npm start
+                    '''
                 }
             }
         }
@@ -25,9 +29,10 @@ pipeline {
         stage("Clonar o projeto de teste") {
             steps {
                 // 1. Altera o nome da pasta para o nome do seu novo repositório
-                bat 'if exist aula-M18-DevOps-avancado rmdir /s /q aula-M18-DevOps-avancado'
-                // 2. Altera a URL para o seu GitHub
-                bat 'git clone --depth 1 https://github.com/alexamariano/aula-M18-DevOps-avancado.git'
+                bat '''
+                    if exist aula-M18-DevOps-avancado rmdir /s /q aula-M18-DevOps-avancado
+                    git clone https://github.com/alexamariano/aula-M18-DevOps-avancado.git
+                    '''
             }
         }
 
@@ -35,7 +40,7 @@ pipeline {
             steps {
                 // 3. Atualiza o diretório
                 dir('aula-M18-DevOps-avancado') {
-                    bat 'npm install'
+                    bat 'call npm install'
                 }
             }
         }
@@ -44,21 +49,15 @@ pipeline {
             steps {
                 // 4. Atualiza o diretório
                 dir('aula-M18-DevOps-avancado') {
-                    bat 'npm test'
+                    bat 'call npm test'
                 }
             }
         }
     }
 
-    /*post {
+    post {
         always {
-            // 5. Atualiza o diretório no post-build
-            dir('aula-M18-DevOps-avancado') {
-                archiveArtifacts artifacts: 'cypress/screenshots/**/*.*,cypress/videos/**/*.*', allowEmptyArchive: true
-                //allure includeProperties: false, jdk: '', results: [[ path: 'allure-report']]
-            }
-          
-            bat 'pkill -f "node" || true' 
+            bat 'taskkill /F /IM node.exe || exit 0' 
         }
-    }*/
+    }
 }

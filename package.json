@@ -4,7 +4,7 @@
   "description": "Este projeto trata-se de um teste de UI para o Hub de Leitura da EBAC.",
   "main": "index.js",
   "scripts": {
-    "test": "npx cypress run --browser chrome",
+    "test": "npx cypress run",
     "cy:report": "npx cypress run --browser chrome --record --key 1ed3ef5e-c9c6-4959-ab41-cb80f3e0b889"
   },
   "repository": {

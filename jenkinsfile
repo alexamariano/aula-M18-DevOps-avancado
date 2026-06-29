@@ -15,7 +15,7 @@ pipeline {
             steps {
                 dir('hub-de-leitura-integrado2') {
                     bat 'npm install'
-                    bat 'nohup npm start &'
+                    bat 'npm start'
                 }
             }
         }
@@ -25,7 +25,7 @@ pipeline {
         stage("Clonar o projeto de teste") {
             steps {
                 // 1. Altera o nome da pasta para o nome do seu novo repositório
-                bat 'rm -rf aula-M18-DevOps-avancado || true'
+                bat 'if exist aula-M18-DevOps-avancado rmdir /s /q aula-M18-DevOps-avancado'
                 // 2. Altera a URL para o seu GitHub
                 bat 'git clone --depth 1 https://github.com/alexamariano/aula-M18-DevOps-avancado.git'
             }
@@ -50,7 +50,7 @@ pipeline {
         }
     }
 
-    post {
+    /*post {
         always {
             // 5. Atualiza o diretório no post-build
             dir('aula-M18-DevOps-avancado') {
@@ -60,5 +60,5 @@ pipeline {
           
             bat 'pkill -f "node" || true' 
         }
-    }
+    }*/
 }
